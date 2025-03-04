@@ -1,4 +1,6 @@
 using System;
+using Microsoft.EntityFrameworkCore;
+using uni.learn.business.logic.Context;
 using uni.learn.core.Entities;
 using uni.learn.core.Interfaces;
 
@@ -6,33 +8,24 @@ namespace uni.learn.business.logic.Repositories;
 
 public class VotosRepository : IVotosRepository
 {
-    public Task<bool> AddOrUpdateVotoAsync(int cursoId, string userId, bool Like)
+    private readonly MainDbContext _context;
+    public VotosRepository(MainDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
     public Task<int> GetDislikesCountAsync(int cursoId)
     {
-        throw new NotImplementedException();
+        return _context.Votos.Where(x => !x.Like).CountAsync();
     }
 
     public Task<int> GetLikesCountAsync(int cursoId)
     {
-        throw new NotImplementedException();
+        return _context.Votos.Where(x => x.Like).CountAsync();
     }
 
-    public Task<IEnumerable<Votos>> GetUserVotosAsync(string userId)
+     public Task<bool> UserVotedCursoAsync(int cursoId, string userId)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> RemoveVotoAsync(int cursoId, string userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> UserVotedCursoAsync(int cursoId, string userId)
-    {
-        throw new NotImplementedException();
+        return _context.Votos.AnyAsync(c => c.CursoId == cursoId && c.UserId == userId);
     }
 }

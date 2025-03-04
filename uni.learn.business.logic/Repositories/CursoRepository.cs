@@ -1,4 +1,6 @@
 using System;
+using Microsoft.EntityFrameworkCore;
+using uni.learn.business.logic.Context;
 using uni.learn.core.Entities;
 using uni.learn.core.Interfaces;
 
@@ -6,18 +8,23 @@ namespace uni.learn.business.logic.Repositories;
 
 public class CursoRepository : ICursoRepository
 {
-    public Task<IReadOnlyCollection<Curso>> GetApprovedCursosAsync()
+    private readonly MainDbContext _context;
+    public CursoRepository(MainDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    public async Task<IReadOnlyCollection<Curso>> GetApprovedCursosAsync()
+    {
+        return await _context.Curso.Where(c => c.Aprobado).Include(c => c.Categorias).ToListAsync();
     }
 
-    public Task<Curso> GetByIDAsync(int id)
+    public async Task<Curso> GetByIDAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Curso.Include(c => c.Categorias).FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public Task<IReadOnlyCollection<Curso>> GetUnApprovedCursosAsync()
+    public async Task<IReadOnlyCollection<Curso>> GetUnApprovedCursosAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Curso.Where(c => c.Aprobado).Include(c => c.Categorias).ToListAsync();
     }
 }
