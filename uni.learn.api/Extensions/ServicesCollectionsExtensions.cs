@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using uni.learn.business.logic.Context;
 using uni.learn.core.Entities;
 using uni.learn.business.logic.Repositories;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using uni.learn.core.Interfaces;
 namespace uni.learn.api.Extensions;
 
