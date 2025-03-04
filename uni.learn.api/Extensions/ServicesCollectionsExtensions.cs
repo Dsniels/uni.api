@@ -5,34 +5,43 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using uni.learn.business.logic.Context;
 using uni.learn.core.Entities;
-
+using uni.learn.business.logic.Repositories;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using uni.learn.core.Interfaces;
 namespace uni.learn.api.Extensions;
 
-public static class ServicesCollectionsExtensions 
+public static class ServicesCollectionsExtensions
 {
 
-    public static void AddInfraestructure(this IServiceCollection services, IConfiguration configuration){
+    public static void AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
+    {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<MainDbContext>(opts => {
+        services.AddDbContext<MainDbContext>(opts =>
+        {
             opts.UseSqlServer(connectionString);
         });
-        services.AddDbContext<SecurityDbContext>(opts => {
+        services.AddDbContext<SecurityDbContext>(opts =>
+        {
             opts.UseSqlServer(connectionString);
         });
     }
 
-    public static void AddIdentityUser(this IServiceCollection services){
+    public static void AddIdentityUser(this IServiceCollection services)
+    {
         var builder = services.AddIdentityCore<User>();
-        builder = new  IdentityBuilder(builder.UserType, builder.Services);
+        builder = new IdentityBuilder(builder.UserType, builder.Services);
         builder.AddRoles<IdentityRole>();
         builder.AddEntityFrameworkStores<SecurityDbContext>();
         builder.AddSignInManager<SignInManager<User>>();
     }
 
-    public static void AddSecurity(this IServiceCollection services){
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opts=>{
+    public static void AddSecurity(this IServiceCollection services)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opts =>
+        {
             opts.UseSecurityTokenValidators = true;
-            opts.TokenValidationParameters = new TokenValidationParameters{
+            opts.TokenValidationParameters = new TokenValidationParameters
+            {
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = false
@@ -41,10 +50,16 @@ public static class ServicesCollectionsExtensions
         services.AddAuthorization();
     }
 
-   public static void AddRepositories(this IServiceCollection services){
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<ICursoRepository, CursoRepository>();
+        services.AddScoped<IVotosRepository,VotosRepository>();
+
     }
 
-    public static void AddServices(this IServiceCollection services){
+    public static void AddServices(this IServiceCollection services)
+    {
     }
 
 }
